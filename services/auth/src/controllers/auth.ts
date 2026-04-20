@@ -15,12 +15,12 @@ export const loginUser = TryCatch(async (req, res) => {
             message: "Authorization code is required"
         });
     }
-    const googleRes= await oauth2client.getToken(code);
+    const googleRes = await oauth2client.getToken(code);
 
     oauth2client.setCredentials(googleRes.tokens);
-    const userRes= await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
+    const userRes = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
 
-  
+
     const { email, name, picture } = userRes.data;
 
     let user = await User.findOne({ email });
@@ -100,8 +100,23 @@ export const addUserRole = TryCatch(async (req: AuthenticatedRequest, res) => {
 
 export const myProfile = TryCatch(async (req: AuthenticatedRequest, res) => {
     const user = req.user;
+
+    
     res.json({
         success: true,
         user
     })
+})
+
+
+export const logout = TryCatch(async (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.status(200).json({
+        success: true,
+        message: "Logout successful"
+    });
 })

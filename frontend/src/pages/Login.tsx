@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -5,10 +6,12 @@ import toast from "react-hot-toast";
 import { useGoogleLogin } from '@react-oauth/google';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAppData } from "@/context/AppContext";
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
+    const{setUser,setAuth}= useAppData()
 
     const responseGoogle = async (authResults: any) => {
         setLoading(true)
@@ -21,6 +24,8 @@ const Login = () => {
             console.log("Login successful, token stored:", authResults["code"]);
             toast.success(result.data.message);
             setLoading(false);
+            setUser(result.data.user);
+            setAuth(true);
             navigate("/")
         } catch (error) {
             console.log(error);
@@ -36,7 +41,7 @@ const Login = () => {
     })
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-400 via-pink-400 to-yellow-400 flex items-center justify-center p-6">
+        <div className="min-h-screen bg-linear-to-br from-orange-400 via-pink-400 to-yellow-400 flex items-center justify-center p-6">
             <div className="w-full max-w-md">
                 {/* Logo & Brand */}
                 <div className="flex flex-col items-center mb-10">

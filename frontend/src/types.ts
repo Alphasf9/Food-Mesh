@@ -24,6 +24,8 @@ export interface AppContextType {
     location: LocationData | null;
     locationLoading: boolean;
     city: string;
+    postcode: string;
+    setPostcode: React.Dispatch<React.SetStateAction<string>>;
     setLocation: React.Dispatch<React.SetStateAction<LocationData | null>>;
     setLocationLoading: React.Dispatch<React.SetStateAction<boolean>>;
     setCity: React.Dispatch<React.SetStateAction<string>>;

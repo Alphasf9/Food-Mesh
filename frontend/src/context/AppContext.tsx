@@ -21,6 +21,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     const [location, setLocation] = useState<LocationData | null>(null);
     const [locationLoading, setLocationLoading] = useState(false);
     const [city, setCity] = useState("fetching location...");
+    const [postcode, setPostcode] = useState("");
 
     async function fetchUser() {
         try {
@@ -35,7 +36,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("Fetched user data:", data);
+            // console.log("Fetched user data:", data);
             setUser(data.user);
             setAuth(true);
 
@@ -51,12 +52,54 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         fetchUser();
     }, []);
 
+
+    useEffect(() => {
+        if (!navigator.geolocation) return alert("Please allow location access to use the app");
+        setLocationLoading(true);
+
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+
+                const data = await res.json();
+                console.log("Fetched location data:", data.address);
+
+                setLocation({
+                    latitude,
+                    longitude,
+                    formattedAddress: data.display_name || "Unknown Location",
+                })
+
+                setCity(data.address.city || data.address.town || data.address.village || "Unknown City");
+                setPostcode(data.address.postcode || "");
+                // console.log("set city is: ", data.address.city);
+
+            } catch (error) {
+                console.error("Error fetching location data:", error);
+                setLocation({
+                    latitude,
+                    longitude,
+                    formattedAddress: "Unknown Location",
+                });
+                setCity("Fetching location...");
+                setPostcode("Please type if displyed postal code is wrong");
+                setLocationLoading(false);
+            }
+
+
+        })
+    }, []);
+
     return (
         <AppContext.Provider value={{
             user, auth, loading,
             location, locationLoading, city,
             fetchUser, setUser, setAuth, setLoading,
-            setLocation, setLocationLoading, setCity
+            setLocation, setLocationLoading, setCity,
+            postcode, setPostcode
         }}>
 
             {children}
