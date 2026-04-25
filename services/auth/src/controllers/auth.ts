@@ -32,7 +32,12 @@ export const loginUser = TryCatch(async (req, res) => {
         })
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
+    const token = jwt.sign({
+        id: user._id,
+        role: user.role,
+        email: user.email,
+        name: user.name
+    }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
 
     res.cookie("token", token, {
         httpOnly: true,
@@ -87,7 +92,16 @@ export const addUserRole = TryCatch(async (req: AuthenticatedRequest, res) => {
         });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
+    const token = jwt.sign(
+        {
+            id: user._id,
+            role: user.role,
+            email: user.email,
+            name: user.name
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "7d" }
+    );
 
     res.status(200).json({
         success: true,
@@ -101,7 +115,9 @@ export const addUserRole = TryCatch(async (req: AuthenticatedRequest, res) => {
 export const myProfile = TryCatch(async (req: AuthenticatedRequest, res) => {
     const user = req.user;
 
-    
+
+console.log("user:", user);
+
     res.json({
         success: true,
         user

@@ -7,12 +7,17 @@ import PublicRoutes from "./components/publicRoutes"
 import SelectRole from "./pages/SelectRole"
 import Navbar from "./components/navbar"
 import AccountPage from "./pages/AccountPage"
+import Restaurant from "./pages/Restaurant"
 
 const App = () => {
+
+
+
+
   return (
     <>
       <BrowserRouter>
-      <Navbar />    
+        <Navbar />
         <Routes>
 
           <Route element={<PublicRoutes />}>
@@ -23,6 +28,8 @@ const App = () => {
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/select-role" element={<SelectRole />}></Route>
             <Route path="/my-account" element={<AccountPage />}></Route>
+            <Route path="/my-restaurant" element={<Restaurant />}></Route>
+
             {/* <Route element={<Navbar />} ></Route>  */}
           </Route>
 

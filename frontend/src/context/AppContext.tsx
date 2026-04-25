@@ -16,6 +16,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [auth, setAuth] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [initializing, setInitializing] = useState(true);
 
 
     const [location, setLocation] = useState<LocationData | null>(null);
@@ -27,7 +28,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         try {
             const token = localStorage.getItem("accessToken");
             if (!token) {
+                setUser(null);
                 setAuth(false);
+                setLoading(false);
+                setInitializing(false);
                 return;
             }
 
@@ -36,14 +40,21 @@ export const AppProvider = ({ children }: AppProviderProps) => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // console.log("Fetched user data:", data);
+            console.log("Fetched user data:", data);
             setUser(data.user);
             setAuth(true);
+            if (data.token) {
+                localStorage.setItem("accessToken", data.token);
+            }
 
         } catch (error) {
             console.error("Error fetching user:", error);
+            setUser(null);
+            setAuth(false);
+            localStorage.removeItem("accessToken");
         } finally {
             setLoading(false);
+            setInitializing(false);
         }
 
     }
@@ -65,7 +76,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
 
                 const data = await res.json();
-                console.log("Fetched location data:", data.address);
+                // console.log("Fetched location data:", data.address);
 
                 setLocation({
                     latitude,
@@ -75,6 +86,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
                 setCity(data.address.city || data.address.town || data.address.village || "Unknown City");
                 setPostcode(data.address.postcode || "");
+                setLocationLoading(false);
                 // console.log("set city is: ", data.address.city);
 
             } catch (error) {
@@ -99,7 +111,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
             location, locationLoading, city,
             fetchUser, setUser, setAuth, setLoading,
             setLocation, setLocationLoading, setCity,
-            postcode, setPostcode
+            postcode, setPostcode, initializing, setInitializing
         }}>
 
             {children}

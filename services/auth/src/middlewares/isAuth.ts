@@ -25,6 +25,7 @@ export const isAuth = async (req: AuthenticatedRequest, res: Response, next: Nex
             });
             return
         }
+        console.log("token:", token);
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
@@ -35,6 +36,8 @@ export const isAuth = async (req: AuthenticatedRequest, res: Response, next: Nex
             });
             return
         }
+
+        console.log("decoded:", decoded);
 
         const user = await User.findById(decoded.id);
 

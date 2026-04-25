@@ -11,15 +11,21 @@ import { useAppData } from "@/context/AppContext";
 const Login = () => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
-    const{setUser,setAuth}= useAppData()
+    const { setUser, setAuth } = useAppData()
 
     const responseGoogle = async (authResults: any) => {
         setLoading(true)
         try {
-            const result = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
-                code: authResults["code"]
-            });
-
+            const result = await axios.post(
+                `${import.meta.env.VITE_API_URL}/login`,
+                { code: authResults.code },
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
             localStorage.setItem("accessToken", result.data.token);
             console.log("Login successful, token stored:", authResults["code"]);
             toast.success(result.data.message);
