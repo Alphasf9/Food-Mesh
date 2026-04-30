@@ -5,6 +5,9 @@ const ProtectedRoutes = () => {
     const location = useLocation();
     const { auth, loading, initializing, user } = useAppData();
 
+    const sellerAllowedPaths = ["/my-restaurant", "/my-account"];
+
+
     if (initializing || loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -25,7 +28,8 @@ const ProtectedRoutes = () => {
         return <Navigate to={"/"} replace />
     }
 
-    if (user?.role === "seller" && location.pathname !== "/my-restaurant") {
+
+    if (user?.role === "seller" && !sellerAllowedPaths.includes(location.pathname)) {
         return <Navigate to={"/my-restaurant"} replace />
     }
 

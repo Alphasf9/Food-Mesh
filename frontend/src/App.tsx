@@ -8,6 +8,7 @@ import SelectRole from "./pages/SelectRole"
 import Navbar from "./components/navbar"
 import AccountPage from "./pages/AccountPage"
 import Restaurant from "./pages/Restaurant"
+import AddRestaurant from "./pages/AddRestaurant"
 
 const App = () => {
 

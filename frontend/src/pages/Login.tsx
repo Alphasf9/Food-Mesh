@@ -42,9 +42,13 @@ const Login = () => {
 
     const googleLogin = useGoogleLogin({
         onSuccess: responseGoogle,
-        onError: responseGoogle,
+        onError: (error) => {
+            console.log("Google Login Error:", error);
+            toast.error("Google login failed. Please try again.");
+            setLoading(false);
+        },
         flow: "auth-code",
-    })
+    });
 
     return (
         <div className="min-h-screen bg-linear-to-br from-orange-400 via-pink-400 to-yellow-400 flex items-center justify-center p-6">

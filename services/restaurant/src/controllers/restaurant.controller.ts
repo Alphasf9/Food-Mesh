@@ -46,7 +46,7 @@ export const addRestaurant = TryCatch(async (req: AuthenticatedRequest, res) => 
         });
     }
 
-    const fileBuffer = getBuffer(file.path);
+    const fileBuffer = getBuffer(file);
 
     if (!fileBuffer?.content) {
         return res.status(400).json({
@@ -154,82 +154,124 @@ export const updateRestaurant = TryCatch(async (req: AuthenticatedRequest, res) 
         });
     }
 
-    const { name, description, latitude, longitude, formattedAddress, phone } = req.body;
+    const { name, description, phone } = req.body;
 
-    if (!name || !description || !latitude || !longitude || !formattedAddress || !phone) {
+    if (!name || !description || !phone) {
         return res.status(400).json({
             success: false,
             message: "All fields are required"
         });
     };
 
+    let imageUrl = restaurant.image;
+
     const file = req.file;
-    if (!file) {
-        return res.status(400).json({
-            success: false,
-            message: "Image is required"
+    if (file) {
+        const fileBuffer = getBuffer(file);
+
+        if (!fileBuffer?.content) {
+            return res.status(400).json({
+                success: false,
+                message: "Failed to create file buffer"
+            });
+        }
+
+        const { data: uploadResult } = await axios.post(`${process.env.UPLOAD_SERVICE_URL}/upload`, {
+            buffer: fileBuffer.content,
         });
+
+        imageUrl = uploadResult.url;
     }
-
-    const fileBuffer = getBuffer(file.path);
-
-    if (!fileBuffer?.content) {
-        return res.status(400).json({
-            success: false,
-            message: "Failed to create file buffer"
-        });
-    }
-
-    const { data: uploadResult } = await axios.post(`${process.env.UPLOAD_SERVICE_URL}/upload`, {
-        buffer: fileBuffer.content,
-    })
 
     await Restaurant.findByIdAndUpdate(restaurant._id, {
         name,
         description,
-        address: formattedAddress,
         phone,
-        image: uploadResult.url,
-        autoLocation: {
-            type: "Point",
-            coordinates: [Number(longitude), Number(latitude)],
-            formattedAddress
-        }
+        image: imageUrl,
     });
 
     return res.status(200).json({
         success: true,
         message: "Restaurant updated successfully"
-    })
-
-})
-
+    });
+});
 
 
-// export const deleteRestaurant = TryCatch(async (req: AuthenticatedRequest, res) => {
 
-//     const user = req.user;
+export const deleteRestaurant = TryCatch(async (req: AuthenticatedRequest, res) => {
 
-//     if (!user) {
-//         return res.status(401).json({
-//             success: false,
-//             message: "Please login to access this route"
-//         });
-//     }
+    const user = req.user;
 
-//     const restaurant = await Restaurant.findOne({ ownerId: user._id });
+    if (!user) {
+        return res.status(401).json({
+            success: false,
+            message: "Please login to access this route"
+        });
+    }
 
-//     if (!restaurant) {
-//         return res.status(404).json({
-//             success: false,
-//             message: "Restaurant not found"
-//         });
-//     }
+    const restaurant = await Restaurant.findOne({ ownerId: user._id });
 
-//     await Restaurant.findByIdAndDelete(restaurant._id);
+    if (!restaurant) {
+        return res.status(404).json({
+            success: false,
+            message: "Restaurant not found"
+        });
+    }
 
-//     return res.status(200).json({
-//         success: true,
-//         message: "Restaurant deleted successfully"
-//     })
-// })
+    await Restaurant.findByIdAndDelete(restaurant._id);
+
+    const token = jwt.sign({
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        restaurantId: ""
+    }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
+
+    return res.status(200).json({
+        success: true,
+        message: "Restaurant deleted successfully",
+        token 
+    });
+});
+
+
+
+export const updateStatusofRestaurant = TryCatch(async (req: AuthenticatedRequest, res) => {
+    const user = req.user;
+
+    if (!user) {
+        return res.status(401).json({
+            success: false,
+            message: "Please login to access this route"
+        });
+    }
+
+    const { status } = req.body;
+
+    if (typeof status !== "boolean") {
+        return res.status(400).json({
+            success: false,
+            message: "Status must be a boolean"
+        });
+    }
+
+    const restaurant = await Restaurant.findOneAndUpdate(
+        { ownerId: user._id },
+        { isOpen: status },
+        { new: true }
+    );
+
+    if (!restaurant) {
+        return res.status(404).json({
+            success: false,
+            message: "Restaurant not found"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "Status updated successfully",
+        restaurant
+    });
+});

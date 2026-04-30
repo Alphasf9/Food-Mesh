@@ -116,7 +116,7 @@ export const myProfile = TryCatch(async (req: AuthenticatedRequest, res) => {
     const user = req.user;
 
 
-console.log("user:", user);
+// console.log("user:", user);
 
     res.json({
         success: true,

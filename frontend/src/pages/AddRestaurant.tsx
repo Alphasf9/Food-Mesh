@@ -3,7 +3,12 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const AddRestaurant = () => {
+
+interface props{
+    fetchMyRestaurant:()=>Promise<void>;
+}
+
+const AddRestaurant = ({fetchMyRestaurant}:props) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [phone, setPhone] = useState("");
@@ -56,8 +61,10 @@ const AddRestaurant = () => {
             );
 
             toast.success("Restaurant created successfully 🎉");
+            alert("We welcome you to our community! 🤗");
+            fetchMyRestaurant();
 
-            // reset
+            
             setName("");
             setDescription("");
             setPhone("");

@@ -14,29 +14,6 @@ const Navbar = () => {
     const [searchParam, setSearchParam] = useSearchParams();
     const [search, setSearch] = useState(searchParam.get("search") || "");
 
-    // const handleLogout = async () => {
-    //     try {
-    //         await axios.post(
-    //             `${import.meta.env.VITE_API_URL}/logout`,
-    //             {},
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    //                 },
-    //             }
-    //         );
-
-    //         localStorage.removeItem("accessToken");
-    //         setUser(null);
-    //         setAuth(false);
-    //         toast.success("Logged out successfully");
-    //         navigate("/login");
-    //     } catch (err) {
-    //         console.log(err);
-    //         localStorage.removeItem("accessToken"); 
-    //         navigate("/login");
-    //     }
-    // };
 
     useEffect(() => {
         const timer = setTimeout(() => {
