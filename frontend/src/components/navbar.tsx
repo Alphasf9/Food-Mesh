@@ -6,7 +6,7 @@ import { ShoppingCart, User, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-    const { auth } = useAppData();
+    const { auth, cartLength } = useAppData();
     const currentLocation = useLocation();
 
     const isHomePage = currentLocation.pathname === "/";
@@ -60,11 +60,15 @@ const Navbar = () => {
                 {/* Right Side Navigation */}
                 <div className="flex items-center gap-3">
                     {/* Shopping Cart */}
+                    {/* Shopping Cart */}
                     <Link to="/shopping-cart">
                         <Button variant="ghost" size="icon" className="relative hover:bg-orange-50">
                             <ShoppingCart className="w-5 h-5" />
-                            {/* Optional: Cart count badge */}
-                            {/* <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">3</div> */}
+                            {cartLength > 0 && (
+                                <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                                    {cartLength > 99 ? "99+" : cartLength}
+                                </div>
+                            )}
                         </Button>
                     </Link>
 
@@ -78,15 +82,7 @@ const Navbar = () => {
                                 </Button>
                             </Link>
 
-                            {/* Logout Button */}
-                            {/* <Button
-                                onClick={handleLogout}
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-red-50 hover:text-red-600"
-                            >
-                                <LogOut className="w-5 h-5" />
-                            </Button> */}
+                            {/* Cart Length Badge */}
                         </>
                     ) : (
                         <Link to="/login">

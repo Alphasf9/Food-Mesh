@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { IRestaurant } from "@/types";
+import type { IMenu, IRestaurant } from "@/types";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import AddRestaurant from "./AddRestaurant";
@@ -8,6 +8,8 @@ import {
     Power, X, Upload, ChefHat
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import MenuItems from "@/components/MenuItems";
+import AddMenu from "@/components/AddMenu";
 
 type SellerTab = "menu" | "add-item" | "sales";
 
@@ -140,6 +142,29 @@ const Restaurant = () => {
         fetchMyRestaurant();
     }, []);
 
+
+
+
+    const [menuItems, setMenuItems] = useState<IMenu[]>([]);
+
+    const fetchMenuItems = async (restaurantId: string) => {
+        try {
+            const { data } = await axios.get(`${import.meta.env.VITE_MENU_API_URL}/get-all-menu-items/${restaurantId}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+            })
+            setMenuItems(data.items);
+            console.log(data.items[0].name);
+            console.log("restaurantid is ->", restaurantId);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        if (restaurant?._id) {
+            fetchMenuItems(restaurant._id)
+        }
+    }, [restaurant?._id])
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-[70vh]">
@@ -271,9 +296,9 @@ const Restaurant = () => {
 
                 {/* Tab Content */}
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-10 min-h-100">
-                    {tab === "menu" && <p className="text-gray-500 text-center py-20 text-lg">Menu Management Coming Soon...</p>}
-                    {tab === "add-item" && <p className="text-gray-500 text-center py-20 text-lg">Add New Item Form Coming Soon...</p>}
-                    {tab === "sales" && <p className="text-gray-500 text-center py-20 text-lg">Sales & Analytics Dashboard Coming Soon...</p>}
+                    {tab === "menu" && <MenuItems items={menuItems} onItemDeleted={() => fetchMenuItems(restaurant._id)} isSeller={true} />}
+                    {tab === "add-item" && <AddMenu onItemAdded={() => fetchMenuItems(restaurant._id)} />}
+                    {tab === "sales" && <MenuItems />}
                 </div>
             </div>
 

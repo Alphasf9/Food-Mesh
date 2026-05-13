@@ -8,12 +8,10 @@ import SelectRole from "./pages/SelectRole"
 import Navbar from "./components/navbar"
 import AccountPage from "./pages/AccountPage"
 import Restaurant from "./pages/Restaurant"
-import AddRestaurant from "./pages/AddRestaurant"
+import RestaurantPage from "./pages/RestaurantPage"
+import Cart from "./pages/Cart"
 
 const App = () => {
-
-
-
 
   return (
     <>
@@ -30,8 +28,10 @@ const App = () => {
             <Route path="/select-role" element={<SelectRole />}></Route>
             <Route path="/my-account" element={<AccountPage />}></Route>
             <Route path="/my-restaurant" element={<Restaurant />}></Route>
+            <Route path="/restaurant/:id" element={<RestaurantPage />}></Route>
+            <Route path="/shopping-cart" element={<Cart />}></Route>
 
-            {/* <Route element={<Navbar />} ></Route>  */}
+
           </Route>
 
         </Routes>
