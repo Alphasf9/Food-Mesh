@@ -23,7 +23,7 @@ const PORT1 = process.env.PORT1 || 8000;
 
 app.use("/api/v1/restaurants", restaurantRoutes);
 app.use("/api/v1/menu", menuRoutes);
-app.use("/api/v1/cart",cartRoutes);
+app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/address", addressRoutes);
 
 

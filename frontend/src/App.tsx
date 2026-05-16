@@ -10,6 +10,8 @@ import AccountPage from "./pages/AccountPage"
 import Restaurant from "./pages/Restaurant"
 import RestaurantPage from "./pages/RestaurantPage"
 import Cart from "./pages/Cart"
+import AddressPage from "./pages/AddressPage"
+import Checkoutpage from "./pages/Checkoutpage"
 
 const App = () => {
 
@@ -30,6 +32,8 @@ const App = () => {
             <Route path="/my-restaurant" element={<Restaurant />}></Route>
             <Route path="/restaurant/:id" element={<RestaurantPage />}></Route>
             <Route path="/shopping-cart" element={<Cart />}></Route>
+            <Route path="/address" element={<AddressPage />}></Route>
+            <Route path="/checkout" element={<Checkoutpage />}></Route>
 
 
           </Route>
