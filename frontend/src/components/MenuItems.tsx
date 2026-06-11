@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IMenu } from "@/types";
 import axios from "axios";
 import { useState, useRef } from "react";
@@ -23,6 +23,7 @@ const MenuItems = ({ items, onItemDeleted, isSeller, restaurantId }: MenuItemsPr
   const [updating, setUpdating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {fetchCart}=useAppData();
+  
 
   const handleDelete = async (itemId: string) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this menu item? This action cannot be undone.");
@@ -124,6 +125,7 @@ const MenuItems = ({ items, onItemDeleted, isSeller, restaurantId }: MenuItemsPr
       onItemDeleted();
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to update menu item");
+      console.log("Edit error details:", error);
     } finally {
       setUpdating(false);
     }
@@ -141,7 +143,6 @@ const MenuItems = ({ items, onItemDeleted, isSeller, restaurantId }: MenuItemsPr
     );
   }
 
-  // ✅ return is now properly inside MenuItems, outside all other functions
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -211,10 +212,10 @@ const MenuItems = ({ items, onItemDeleted, isSeller, restaurantId }: MenuItemsPr
                     </>
                   ) : (
                     <button
-                      onClick={() => addToCart(item._id)} // ✅ wired up
+                      onClick={() => addToCart(item._id)} 
                       disabled={!item.isAvailable || isLoading}
                       className={`flex-1 py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all active:scale-95 ${item.isAvailable
-                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white hover:shadow-xl"
+                        ? "bg-linear-to-r from-orange-600 to-amber-600 text-white hover:shadow-xl"
                         : "bg-gray-200 text-gray-500 cursor-not-allowed"
                         }`}
                     >

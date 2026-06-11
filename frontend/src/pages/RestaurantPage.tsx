@@ -43,6 +43,7 @@ const RestaurantPage = () => {
     }, [id]);
 
     useEffect(() => {
+
         const loadData = async () => {
             setLoading(true);
             await Promise.all([fetchRestaurant(), fetchMenuItems()]);

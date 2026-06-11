@@ -161,9 +161,16 @@ export const removeCartItem = TryCatch(async (req: AuthenticatedRequest, res) =>
     }
 
     const userId = user._id;
-    const { itemId } = req.params;
+    const itemId = req.params.itemId as string;
 
-    const cartItem = await CartModel.findOne({ _id: itemId, userId });
+    if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+        return res.status(400).json({ message: "Invalid item id" });
+    }
+
+    const cartItem = await CartModel.findOne({
+        _id: new mongoose.Types.ObjectId(itemId),
+        userId
+    });
 
     if (!cartItem) {
         return res.status(404).json({ message: "Cart item not found" });
@@ -175,9 +182,7 @@ export const removeCartItem = TryCatch(async (req: AuthenticatedRequest, res) =>
         success: true,
         message: "Item removed from cart"
     });
-})
-
-
+});
 
 
 

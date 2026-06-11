@@ -10,7 +10,7 @@ router.post('/logout', isAuth, logout)
 
 router.put('/add-role', isAuth, addUserRole)
 
-router.get('/my-user',isAuth,myProfile)
+router.get('/my-user',isAuth,myProfile);
 
 
 export default router;

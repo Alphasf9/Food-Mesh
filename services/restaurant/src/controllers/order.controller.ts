@@ -15,6 +15,8 @@ export const createOrder = TryCatch(async (req: AuthenticatedRequest, res) => {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
+    
+
     const { addressId, paymentMethod, distance } = req.body;
 
     if (!addressId || !paymentMethod) {
@@ -109,35 +111,70 @@ export const createOrder = TryCatch(async (req: AuthenticatedRequest, res) => {
         return res.status(400).json({ message: "Failed to make an order" });
     }
 
-    await CartModel.deleteMany({ userId: user._id });
+    // await CartModel.deleteMany({ userId: user._id });
 
     return res.status(201).json({
         message: "Order placed successfully",
         orderId: order._id,
         amount: totalAmount,
+    })
+});
+
+
+
+export const fetchOrderByPaymentId = TryCatch(async (req: AuthenticatedRequest, res) => {
+    const user = req.user;
+
+    if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const paymentId = req.params.paymentId as string;
+
+    console.log("paymentId is: ", paymentId);
+
+    if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required" });
+    }
+
+    const order = await OrderModel.findOne({
+        userId: user._id as string,
+        paymentId
+    });
+
+    if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+    }
+
+    return res.status(200).json({
+        success: true,
+        order
     });
 });
 
 
 
 export const fetchOrderForPayment = TryCatch(async (req, res) => {
+
+
+
     if (req.headers["x-internal-key"] !== process.env.INTERNAL_SERVICE_KEY) {
-        return res.status(401).json({ message: "Unauthorized" })
+        return res.status(401).json({ message: "Unauthorized" });
     }
 
     const order = await OrderModel.findById(req.params.id);
 
     if (!order) {
-        return res.status(404).json({ message: "Order not found" })
+        return res.status(404).json({ message: "Order not found" });
     }
 
     if (order.paymentStatus !== "pending") {
-        return res.status(400).json({ message: "Payment already processed for this order" })
+        return res.status(400).json({ message: "Payment already processed for this order" });
     }
 
     return res.status(200).json({
         orderId: order._id,
         amount: order.totalAmount,
         currency: "INR",
-    })
-})
+    });
+});

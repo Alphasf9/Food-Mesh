@@ -118,12 +118,11 @@ const Cart = () => {
                         if (typeof cartItem.itemId === "string") return null;
 
                         const item = cartItem.itemId;
-                        const isLoading = loadingItemId === item._id;
+                        const isLoading = loadingItemId === cartItem._id;
 
                         return (
-                                <div key={item._id} className="bg-white rounded-3xl p-6 shadow-sm flex gap-6">
+                            <div key={cartItem._id} className="bg-white rounded-3xl p-6 shadow-sm flex gap-6">
 
-                                {/* Details */}
                                 <div className="flex-1">
                                     <h3 className="text-xl font-semibold text-gray-900">{item.name}</h3>
                                     <p className="text-gray-600 text-sm mt-1 line-clamp-2">{item.description}</p>
@@ -131,7 +130,6 @@ const Cart = () => {
                                     <div className="mt-4 flex items-center justify-between">
                                         <p className="text-2xl font-bold text-orange-600">₹{item.price}</p>
 
-                                        {/* Quantity Controls */}
                                         <div className="flex items-center gap-3 bg-gray-100 rounded-2xl p-1">
                                             <button
                                                 onClick={() => decreaseQuantity(item._id)}
@@ -152,9 +150,9 @@ const Cart = () => {
                                     </div>
                                 </div>
 
-                                {/* Remove Button */}
+                                {/* ✅ Fixed — sending cartItem._id not item._id */}
                                 <button
-                                    onClick={() => removeItem(item._id)}
+                                    onClick={() => removeItem(cartItem._id)}
                                     disabled={isLoading}
                                     className="text-red-500 hover:text-red-600 self-start mt-1 transition"
                                 >

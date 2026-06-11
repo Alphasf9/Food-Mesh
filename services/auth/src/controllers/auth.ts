@@ -15,21 +15,39 @@ export const loginUser = TryCatch(async (req, res) => {
             message: "Authorization code is required"
         });
     }
-    const googleRes = await oauth2client.getToken(code);
+
+    // ✅ catch token exchange errors separately
+    let googleRes;
+    try {
+        googleRes = await oauth2client.getToken(code);
+    } catch (error) {
+        console.error("Google token exchange failed:", error);
+        return res.status(400).json({
+            success: false,
+            message: "Google login failed. Please try again."
+        });
+    }
 
     oauth2client.setCredentials(googleRes.tokens);
-    const userRes = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`)
 
+    // ✅ catch userinfo errors separately  
+    let userRes;
+    try {
+        userRes = await axios.get(
+            `https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
+        );
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: "Failed to fetch Google user info. Please try again."
+        });
+    }
 
     const { email, name, picture } = userRes.data;
 
     let user = await User.findOne({ email });
     if (!user) {
-        user = await User.create({
-            email,
-            name,
-            image: picture
-        })
+        user = await User.create({ email, name, image: picture });
     }
 
     const token = jwt.sign({
@@ -43,8 +61,7 @@ export const loginUser = TryCatch(async (req, res) => {
         httpOnly: true,
         sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-
+    });
 
     res.status(200).json({
         success: true,

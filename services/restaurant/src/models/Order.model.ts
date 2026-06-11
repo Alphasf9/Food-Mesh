@@ -41,6 +41,7 @@ export interface IOrder extends Document {
 
     paymentMethod: "razorpay" | "stripe",
     paymentStatus: "pending" | "paid" | "failed",
+    paymentId: string,
 
 
     expiredAt: Date,
@@ -84,6 +85,7 @@ const OrderSchema: Schema = new Schema({
     status: { type: String, enum: ["placed", "accepted", "preparing", "ready_for_rider", "rider_assigned", "picked_up", "delivered", "cancelled"], default: "placed" },
     paymentMethod: { type: String, enum: ["razorpay", "stripe"], default: "razorpay" },
     paymentStatus: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
+    paymentId: { type: String, default: null },
     expiredAt: { type: Date, required: true, index: { expireAfterSeconds: 0 } }
 }, {
     timestamps: true
