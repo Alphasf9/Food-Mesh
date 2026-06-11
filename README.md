@@ -128,7 +128,7 @@ FoodMesh is a modern food delivery web application that connects customers with 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/foodmesh.git
+git clone https://github.com/Alphasf9/Food-Mesh.git
 cd foodmesh
 ```
 
