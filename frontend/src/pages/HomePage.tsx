@@ -57,7 +57,7 @@ const HomePage = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Hero Section */}
-            <div className="bg-linear-to-br from-orange-600 via-red-500 to-pink-600 pt-20 pb-24">
+            <div className="bg-gradient-to-br from-orange-600 via-red-500 to-pink-600 pt-20 pb-24">
                 <div className="max-w-5xl mx-auto px-6 text-center">
                     <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tighter mb-4">
                         Delicious food, <span className="text-white">delivered fast</span>
@@ -123,20 +123,18 @@ const HomePage = () => {
                         {restaurants.map((restaurant) => (
                             <div
                                 key={restaurant._id}
-                                className={`group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 cursor-pointer ${!restaurant.isOpen ? 'opacity-75' : ''}`}
+                                className={`group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 ${!restaurant.isOpen ? 'opacity-75' : ''}`}
                             >
                                 <div className="relative h-56">
-                                    <Link to={`/restaurant/${restaurant._id}`} className="absolute inset-0 z-10" />
-                                    <img    
+                                    <img
                                         src={restaurant.image}
                                         alt={restaurant.name}
-                                        
                                         className={`w-full h-full object-cover transition-transform duration-500 ${!restaurant.isOpen ? 'grayscale' : 'group-hover:scale-105'}`}
                                     />
 
                                     {/* Status Badge */}
-                                    <div className="absolute top-4 left-4">
-                                        <span className={`px-4 py-1.5 text-xs font-semibold rounded-full flex items-center gap-1.5 backdrop-blur-md ${restaurant.isOpen ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
+                                    <div className="absolute top-4 left-4 z-10">
+                                        <span className={`px-5 py-1.5 text-xs font-semibold rounded-full flex items-center gap-2 backdrop-blur-md shadow-sm ${restaurant.isOpen ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
                                             <div className={`w-2 h-2 rounded-full ${restaurant.isOpen ? "bg-white animate-pulse" : "bg-white"}`} />
                                             {restaurant.isOpen ? "OPEN NOW" : "CLOSED"}
                                         </span>
@@ -144,24 +142,37 @@ const HomePage = () => {
 
                                     {/* Verified Badge */}
                                     {restaurant.isVerified && (
-                                        <div className="absolute top-4 right-4 bg-white text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow">
+                                        <div className="absolute top-4 right-4 bg-white text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow z-10">
                                             <Award className="w-3.5 h-3.5" />
                                             VERIFIED
                                         </div>
                                     )}
 
                                     {/* Distance */}
-                                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md text-xs font-medium px-3 py-1 rounded-full">
+                                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md text-xs font-medium px-3 py-1 rounded-full z-10">
                                         {restaurant.distanceKm ? `${restaurant.distanceKm.toFixed(1)} km` : "Nearby"}
                                     </div>
 
-                                    {/* Closed Overlay */}
+                                    {/* Closed Overlay - More Professional */}
                                     {!restaurant.isOpen && (
-                                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                                            <div className="bg-white/90 px-6 py-2 rounded-full text-red-600 font-semibold text-sm tracking-wider">
-                                                CLOSED
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                                            <div className="text-center">
+                                                <div className="bg-white/95 text-red-600 px-8 py-3 rounded-2xl font-semibold text-sm tracking-wider shadow">
+                                                    CURRENTLY CLOSED
+                                                </div>
+                                                <p className="text-white/90 text-xs mt-3">
+                                                    Will be back soon
+                                                </p>
                                             </div>
                                         </div>
+                                    )}
+
+                                    {/* Clickable Link - Only for Open Restaurants */}
+                                    {restaurant.isOpen && (
+                                        <Link
+                                            to={`/restaurant/${restaurant._id}`}
+                                            className="absolute inset-0 z-30"
+                                        />
                                     )}
                                 </div>
 

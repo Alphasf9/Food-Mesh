@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IOrder extends Document {
     userId: string,
+    userEmail: string,
     restaurantId: string,
     restaurantName: string,
     riderId?: string | null,
@@ -41,10 +42,11 @@ export interface IOrder extends Document {
 
     paymentMethod: "razorpay" | "stripe",
     paymentStatus: "pending" | "paid" | "failed",
-    paymentId: string,
+    paymentId?: string | null,
+
+    expiredAt?: Date,
 
 
-    expiredAt: Date,
 
 
     createdAt: Date,
@@ -54,6 +56,7 @@ export interface IOrder extends Document {
 
 const OrderSchema: Schema = new Schema({
     userId: { type: String, required: true },
+    userEmail: { type: String, required: true },
     restaurantId: { type: String, required: true },
     restaurantName: { type: String, required: true },
     riderId: { type: String, default: null },
@@ -86,7 +89,7 @@ const OrderSchema: Schema = new Schema({
     paymentMethod: { type: String, enum: ["razorpay", "stripe"], default: "razorpay" },
     paymentStatus: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
     paymentId: { type: String, default: null },
-    expiredAt: { type: Date, required: true, index: { expireAfterSeconds: 0 } }
+    expiredAt: { type: Date, default: null, index: { expireAfterSeconds: 0 } }
 }, {
     timestamps: true
 });

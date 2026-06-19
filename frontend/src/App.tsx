@@ -13,6 +13,7 @@ import Cart from "./pages/Cart"
 import AddressPage from "./pages/AddressPage"
 import Checkoutpage from "./pages/Checkoutpage"
 import OrderSuccesspage from "./pages/OrderSuccesspage"
+import OrderHistoryPage from "./pages/OrderHistoryPage"
 
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/shopping-cart" element={<Cart />}></Route>
             <Route path="/address" element={<AddressPage />}></Route>
             <Route path="/checkout" element={<Checkoutpage />}></Route>
+            <Route path="/my-orders" element={<OrderHistoryPage />}></Route>
             <Route path="/order-success/:paymentId" element={<OrderSuccesspage />} />
 
 

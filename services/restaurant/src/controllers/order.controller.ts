@@ -15,7 +15,9 @@ export const createOrder = TryCatch(async (req: AuthenticatedRequest, res) => {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
-    
+    if (!user.email) {
+        return res.status(400).json({ message: "User email missing from token. Please login again." });
+    }
 
     const { addressId, paymentMethod, distance } = req.body;
 
@@ -84,6 +86,7 @@ export const createOrder = TryCatch(async (req: AuthenticatedRequest, res) => {
 
     const order = await OrderModel.create({
         userId: user._id.toString(),
+        userEmail: user.email,
         restaurantId: restaurant._id.toString(),
         restaurantName: restaurant.name,
         riderPhone: restaurant.phone,
@@ -111,8 +114,6 @@ export const createOrder = TryCatch(async (req: AuthenticatedRequest, res) => {
         return res.status(400).json({ message: "Failed to make an order" });
     }
 
-    // await CartModel.deleteMany({ userId: user._id });
-
     return res.status(201).json({
         message: "Order placed successfully",
         orderId: order._id,
@@ -131,7 +132,7 @@ export const fetchOrderByPaymentId = TryCatch(async (req: AuthenticatedRequest, 
 
     const paymentId = req.params.paymentId as string;
 
-    console.log("paymentId is: ", paymentId);
+    // console.log("paymentId is: ", paymentId);
 
     if (!paymentId) {
         return res.status(400).json({ message: "Payment ID is required" });
@@ -176,5 +177,23 @@ export const fetchOrderForPayment = TryCatch(async (req, res) => {
         orderId: order._id,
         amount: order.totalAmount,
         currency: "INR",
+    });
+});
+
+
+
+export const orderHistory = TryCatch(async (req: AuthenticatedRequest, res) => {
+
+    const user = req.user;
+
+    if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const orders = await OrderModel.find({ userId: user._id }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+        success: true,
+        orders
     });
 });

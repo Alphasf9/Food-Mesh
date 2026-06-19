@@ -43,7 +43,7 @@ export const verifyRazorPayment = TryCatch(async (req: Request, res: Response) =
         return res.status(400).json({ success: false, message: "Invalid payment signature" });
     }
 
-    console.log("Razorpay Payment ID:  ", razorpay_payment_id);
+    // console.log("Razorpay Payment ID:  ", razorpay_payment_id);
 
     await publishPaymentSuccess({
         orderId,
